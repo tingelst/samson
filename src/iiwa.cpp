@@ -8,6 +8,20 @@ using namespace std;
 
 constexpr double pi = 3.14159265358979323846;
 
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+using namespace Eigen;
+
+Matrix4dual create_affine_matrix(dual a, dual b, dual c, Vector3dual trans)
+{
+    Transform<dual, 3, Eigen::Affine> t;
+    t = Translation<dual, 3>(trans);
+    t.rotate(AngleAxis<dual>(a, Vector3dual::UnitX()));
+    t.rotate(AngleAxis<dual>(b, Vector3dual::UnitY()));
+    t.rotate(AngleAxis<dual>(c, Vector3dual::UnitZ()));
+    return t.matrix();
+}
+
 int main()
 {
 
@@ -29,13 +43,18 @@ int main()
       1.0, 0.0, 0.0, 0.0, L1+L2, 0.0,
       0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
       1.0, 0.0, 0.0, 0.0, L1+L2+L3, 0.0,
-      0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
-  S.transposeInPlace();
+      0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
-  std::cout << S.cols() << std::endl;
+//   S.transposeInPlace();
+
+//   std::cout << S << std::endl;
 
   VectorXdual angles(7);
-  angles << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0;
+  angles << pi/3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 
-  std::cout << samson::robot::fk(M, S, angles) << std::endl;
+  std::cout << samson::robot::fk(M, S, angles) <<  "\n" << std::endl;
+
+  Vector3dual t;
+  t << 1,2,3;
+  std::cout << create_affine_matrix(pi/3, 0.0, 0.0, t ) << std::endl;
 }

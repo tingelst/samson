@@ -60,7 +60,7 @@ int main()
   S.transposeInPlace();
 
   VectorXdual angles(6);
-  angles << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+  angles << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
 
   std::cout << samson::robot::fk(M, S, angles) << std::endl;
 }

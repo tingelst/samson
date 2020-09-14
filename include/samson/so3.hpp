@@ -33,6 +33,7 @@ namespace samson::so3
     auto exp(const Vector3dual &v) -> Matrix3dual
     {
         auto [k, th] = to_axis_angle(v);
+        // std::cout << (th) << std::endl;; 
         Matrix3dual K = so3(k);
         return Matrix3dual::Identity() + sin(th) * K + (1.0 - cos(th)) * K * K;
     }

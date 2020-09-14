@@ -34,13 +34,21 @@ namespace samson::se3
 
     auto exp(Vector6dual &x) -> Matrix4dual
     {
+        using samson::so3::from_axis_angle;
         using samson::so3::so3;
-        using samson::so3::exp;
 
         Vector3dual w = x.head<3>();
         Vector3dual v = x.tail<3>();
 
         dual theta = w.norm();
+        Matrix4dual ret = Matrix4dual::Identity();
+        if (theta == 0.0)
+        {
+            ret = Matrix4dual::Identity();
+            ret.block<3, 1>(0, 3) = v;
+            return ret;
+        }
+
         Vector3dual k = w.normalized();
         dual sin_theta = sin(theta);
         dual one_minus_cos_theta = 1.0 - cos(theta);
@@ -49,8 +57,7 @@ namespace samson::se3
 
         Matrix3dual I = Matrix3dual::Identity();
 
-        Matrix4dual ret = Matrix4dual::Identity();
-        ret.block<3, 3>(0, 0) = exp(K);
+        ret.block<3, 3>(0, 0) = from_axis_angle(k, theta);
         ret.block<3, 1>(0, 3) = (I * theta + one_minus_cos_theta * K + (theta - sin_theta) * KK) * (v / theta);
 
         return ret;
